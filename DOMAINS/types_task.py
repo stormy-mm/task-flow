@@ -1,12 +1,10 @@
-import exceptions as e
-
 from datetime import datetime
-
-from zoneinfo import ZoneInfo
 
 from abc import ABC, abstractmethod
 
 from DOMAINS.checks import CheckChangeStatusTask as Check
+
+from DOMAINS.time_clock import Clock
 
 
 class TaskBehaviour(ABC):
@@ -18,20 +16,27 @@ class TaskBehaviour(ABC):
     def on_complete(self, task):
         pass
 
+    @property
+    def type(self) -> str:
+        return self.__class__.__name__
+
 
 class SimpleBehavior(TaskBehaviour):
     """Класс для простой задачи"""
     def can_complete(self, task, status) -> bool:
+        """Функция для проверки возможности завершения задачи"""
         return Check(task.status, status).execute()
 
 
 class TimedBehavior(TaskBehaviour):
     """Класс для задачи с временем"""
-    def __init__(self, deadline):
+    def __init__(self, deadline: datetime):
         self.deadline = deadline
 
     def can_complete(self, task, status) -> bool:
-        return datetime.now(ZoneInfo("UTC")) <= self.deadline
+        if Clock.now() <= self.deadline:
+            return Check(task.status, status).execute()
+        return False
 
 
 class RepeatableBehavior(TaskBehaviour):

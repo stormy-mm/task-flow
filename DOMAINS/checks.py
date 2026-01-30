@@ -28,6 +28,8 @@ class CheckChangeStatusTask:
                 return self.can_change_to_done()
             case St.IN_PROGRESS:
                 return self.can_change_to_start()
+            case St.CANCELLED:
+                return self.can_change_to_cancel()
         return True
 
     def can_change_to_done(self) -> bool:
@@ -37,6 +39,10 @@ class CheckChangeStatusTask:
     def can_change_to_start(self) -> bool:
         """Проверка разрешения изменения статуса задачи на IN_PROGRESS"""
         return ICheck.can_change_status(self.task_status, e.TaskCannotStart, St.DONE, St.CANCELLED)
+
+    def can_change_to_cancel(self) -> bool:
+        """Проверка разрешения изменения статуса задачи на CANCELLED"""
+        return ICheck.can_change_status(self.task_status, e.TaskCannotCancel, St.DONE)
 
 
 
