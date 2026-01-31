@@ -16,10 +16,6 @@ class TaskBehaviour(ABC):
     def on_complete(self, task):
         pass
 
-    @property
-    def type(self) -> str:
-        return self.__class__.__name__
-
 
 class SimpleBehavior(TaskBehaviour):
     """Класс для простой задачи"""
