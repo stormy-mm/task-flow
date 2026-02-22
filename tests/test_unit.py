@@ -6,14 +6,14 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from DOMAINS.TASK_MANAGER import Task
-from DOMAINS.time_clock import FakeClock
-from DOMAINS.types_task import TimedBehavior
-from DOMAINS.repository_task import InMemoryTaskRepository, JsonTaskRepository
-from DOMAINS.factories import TaskFactory, RunCommand, EditTask, OtherCommands
-from DOMAINS.parsing import ParsingDate
+from src.TASK_MANAGER import Task
+from src.time_clock import FakeClock
+from src.types_task import TimedBehavior
+from src.repository_task import InMemoryTaskRepository, JsonTaskRepository
+from src.factories import TaskFactory, RunCommand, EditTask, OtherCommands
+from src.parsing import ParsingDate
 
-from MESSAGES.status import Status as St
+from messages.status import Status as St
 
 
 
