@@ -1,5 +1,7 @@
 from datetime import datetime
+from typing import Callable, Optional
 
+from DOMAINS.time_clock import Clock
 from DOMAINS.types_task import TaskBehaviour, SimpleBehavior, TimedBehavior
 
 from MESSAGES.status import Status as St
@@ -17,10 +19,10 @@ class Task:
             self,
             id_task: int,
             title: str,
-            description : str,
+            description: Optional[str],
             status: St,
             behaviour: TaskBehaviour,
-            deadline: datetime,
+            deadline: Optional[datetime],
             date: datetime,
             up_date: datetime
     ):
@@ -64,7 +66,7 @@ class Task:
         return {
             "id_task": self.id_task,
             "title": self.title,
-            "description": self.description,
+            "description": self.description if self.description is not None else "",
             "status": self._status,
             "behaviour_type": "timed" if isinstance(self._behaviour, TimedBehavior) else "simple",
             "deadline": self.deadline.isoformat() if self.deadline else None,
@@ -73,7 +75,7 @@ class Task:
         }
 
     @classmethod
-    def from_dict(cls, d: dict) -> "Task":
+    def from_dict(cls, d: dict) -> Task:
         """Восстановление задачи из словаря (после загрузки из JSON)."""
         deadline = datetime.fromisoformat(d["deadline"]) if d.get("deadline") else None
         behaviour: TaskBehaviour = (
@@ -92,31 +94,29 @@ class Task:
 
 
 class TaskCommand:
-    """Класс для выполнения задачи"""
+    """Класс для выполнения команды над задачей"""
 
-    def __init__(self, task: Task):
+    def __init__(self, task: Task, get_now: Optional[Callable[[], datetime]] = None):
         self.task = task
+        self._get_now = get_now or (lambda: Clock.now())
 
     def start(self) -> None:
         """Функция для начала выполнения задачи"""
         self.task._behaviour.can_complete(self.task, St.IN_PROGRESS)
-
         self.task._status = St.IN_PROGRESS
-        self.task._updated_at = self.task._created_at
+        self.task._updated_at = self._get_now()
 
     def complete(self) -> None:
         """Функция для завершения задачи"""
         self.task._behaviour.can_complete(self.task, St.DONE)
-
         self.task._status = St.DONE
-        self.task._updated_at = self.task._created_at
+        self.task._updated_at = self._get_now()
 
     def cancel(self) -> None:
         """Функция для отмены задачи"""
         self.task._behaviour.can_complete(self.task, St.CANCELLED)
-
         self.task._status = St.CANCELLED
-        self.task._updated_at = self.task._created_at
+        self.task._updated_at = self._get_now()
 
 
 class TaskEdit:
