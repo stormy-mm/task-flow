@@ -24,6 +24,12 @@ class InMemoryTaskRepository:
             return n
         raise e.TaskNotFind
 
+    def delete(self, task_id: int) -> None:
+        """Удаление задачи по идентификатору."""
+        if task_id not in self._tasks:
+            raise e.TaskNotFind
+        del self._tasks[task_id]
+
     def update_task(self, task: Task) -> None:
         """Функция для обновления задачи"""
         self._tasks[task.id_task] = task
@@ -83,6 +89,11 @@ class JsonTaskRepository(InMemoryTaskRepository):
     def update_task(self, task: Task) -> None:
         """Обновление задачи и сохранение в файл."""
         super().update_task(task)
+        self._save()
+
+    def delete(self, task_id: int) -> None:
+        """Удаление задачи по идентификатору и сохранение в файл."""
+        super().delete(task_id)
         self._save()
 
     def clear(self) -> None:

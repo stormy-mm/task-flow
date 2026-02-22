@@ -1,14 +1,19 @@
 import exceptions as e
 
 from datetime import datetime
+from typing import Callable, Optional
 
+from DOMAINS.checks import CheckOVERDUEStatus
 from DOMAINS.parsing import ParsingDate
 from DOMAINS.TASK_MANAGER import Task, TaskCommand, TaskEdit
-from DOMAINS.repository_task import InMemoryTaskRepository
+from DOMAINS.repository_task import JsonTaskRepository
 from DOMAINS.time_clock import Clock
-from DOMAINS.types_task import SimpleBehavior, TimedBehavior
+from DOMAINS.types_task import SimpleBehavior, TaskBehaviour, TimedBehavior
 
-from MESSAGES.status import Status as St
+
+def _default_get_now() -> datetime:
+    """Дефолтная функция для получения текущего времени"""
+    return Clock.now()
 
 
 class TaskFactory:
@@ -20,34 +25,46 @@ class TaskFactory:
             title: str,
             description: str,
             deadline: str | None,
-            date: datetime = Clock.now()
+            date: Optional[datetime] = None,
+            get_now: Optional[Callable[[], datetime]] = None,
     ) -> Task:
         """Фабричный метод для создания задачи"""
-        behaviour = SimpleBehavior()
-        if not deadline is None:
-            deadline = ParsingDate(deadline).date
-            behaviour = TimedBehavior(deadline)
+        get_now = get_now or _default_get_now
+        now = date if date is not None else get_now()
+
+        behaviour: TaskBehaviour = SimpleBehavior()
+        parsed_deadline: Optional[datetime] = None
+        if deadline != "":
+            parsed_deadline = ParsingDate(deadline).date
+            behaviour = TimedBehavior(parsed_deadline, get_now=get_now)
+        status = CheckOVERDUEStatus(parsed_deadline, now).run()
 
         return Task(
             id_task=id_task,
             title=title,
             description=description,
             behaviour=behaviour,
-            status=St.NEW,
-            deadline=deadline,
-            date=date,
-            up_date=date
+            status=status,
+            deadline=parsed_deadline,
+            date=now,
+            up_date=now,
         )
 
 
 class RunCommand:
     """Фабрика для запуска команды"""
 
-    def __init__(self, task: Task, memory: InMemoryTaskRepository):
+    def __init__(
+            self,
+            task: Task,
+            memory: JsonTaskRepository,
+            get_now: Optional[Callable[[], datetime]] = None,
+    ):
         """Инициализация фабрики"""
         self.memory = memory
         self.task = task
-        self.command = TaskCommand(self.task)
+        self._get_now = get_now or _default_get_now
+        self.command = TaskCommand(self.task, get_now=self._get_now)
 
     def add(self):
         """Фабричный метод для добавления задачи"""
@@ -77,11 +94,15 @@ class RunCommand:
         self.command.cancel()
         self.memory.update_task(self.task)
 
+    def delete(self) -> None:
+        """Фабричный метод для удаления задачи"""
+        self.memory.delete(self.task.id_task)
+
 
 class EditTask:
     """Фабрика для редактирования задачи"""
 
-    def __init__(self, task: Task, memory: InMemoryTaskRepository) -> None:
+    def __init__(self, task: Task, memory: JsonTaskRepository) -> None:
         """Инициализация фабрики"""
         self.memory = memory
         self.task = task
@@ -89,23 +110,15 @@ class EditTask:
 
     def edit_id(self, new_id: int) -> None:
         """Фабричный метод для редактирования id задачи"""
-        # Сохраняем старый ID
         old_id = self.task.id_task
-
         try:
-            if RunCommand(self.task, self.memory).find(new_id):
-                raise e.UnavailableID
+            self.memory.get_by_id(new_id)
+            raise e.UnavailableID
         except e.TaskNotFind:
             pass
-
-        # Изменяем ID задачи
         self.edit.edit_id(new_id)
-
-        # Удаляем старую запись и добавляем новую с новым ID
-        if old_id in self.memory._tasks:
-            del self.memory._tasks[old_id]
-
-        RunCommand(self.task, self.memory).add()
+        self.memory.delete(old_id)
+        self.memory.add_task(self.task)
 
     def edit_title(self, new_title: str) -> None:
         """Фабричный метод для редактирования заголовка задачи"""
@@ -131,7 +144,7 @@ class EditTask:
 class OtherCommands:
     """Фабрика других команд"""
 
-    def __init__(self, memory: InMemoryTaskRepository):
+    def __init__(self, memory: JsonTaskRepository):
         """Инициализация памяти"""
         self.memory = memory
 
