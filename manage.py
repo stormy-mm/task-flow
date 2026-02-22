@@ -1,6 +1,6 @@
-from DOMAINS.repository_task import JsonTaskRepository
-from DOMAINS.task_application import TaskApplication
-from DOMAINS.handlers import Handler
+from src.repository_task import JsonTaskRepository
+from src.task_application import TaskApplication
+from src.handlers import Handler
 
 
 def main():
