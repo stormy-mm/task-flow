@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 
 # json files
-*.json
+src/my_app/tasks.json
 
 # C extensions
 *.so
