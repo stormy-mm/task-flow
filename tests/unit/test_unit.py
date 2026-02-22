@@ -1,19 +1,19 @@
 import tempfile
 import unittest
-import exceptions as e
+from src.my_app.common import exceptions as e
 from pathlib import Path
 
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from src.TASK_MANAGER import Task
-from src.time_clock import FakeClock
-from src.types_task import TimedBehavior
-from src.repository_task import InMemoryTaskRepository, JsonTaskRepository
-from src.factories import TaskFactory, RunCommand, EditTask, OtherCommands
-from src.parsing import ParsingDate
+from src import Task
+from src import FakeClock
+from src import TimedBehavior
+from src import InMemoryTaskRepository, JsonTaskRepository
+from src import TaskFactory, RunCommand, EditTask, OtherCommands
+from src import ParsingDate
 
-from messages.status import Status as St
+from src.my_app.common.messages.cli_status import Status as St
 
 
 
