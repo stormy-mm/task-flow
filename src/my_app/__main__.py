@@ -5,13 +5,13 @@ from my_app.cli.input_handlers import Handler
 
 def main():
     """Главная функция: репозиторий и приложение создаются здесь, передаются в Handler."""
-    repo = JsonTaskRepository("tasks.json")
-    app = TaskApplication(repo)
-    handler = Handler(app)
+    repo = JsonTaskRepository("tasks.json") # инициализация json репозитория
+    app = TaskApplication(repo) # инициализация приложения
+    handler = Handler(app) # инициализация обработчика
 
-    Handler.show_greeting()
+    handler.show_greeting()
     while True:
-        handler.handle(input(">>> "))
+        handler.user_handler(input(">>> "))
 
 
 if __name__ == "__main__":
