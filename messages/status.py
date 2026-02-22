@@ -1,6 +1,0 @@
-class Status:
-    NEW = "NEW"
-    IN_PROGRESS = "IN_PROGRESS"
-    DONE = "DONE"
-    CANCELLED = "CANCELLED"
-    OVERDUE = "OVERDUE"
