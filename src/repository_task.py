@@ -2,7 +2,7 @@ import json
 import exceptions as e
 from pathlib import Path
 
-from DOMAINS.TASK_MANAGER import Task
+from src.TASK_MANAGER import Task
 
 
 class InMemoryTaskRepository:

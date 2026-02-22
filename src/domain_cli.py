@@ -1,11 +1,11 @@
 import exceptions as e
 
-from DOMAINS.TASK_MANAGER import Task
-from DOMAINS.parsing import ParsingDate
-from DOMAINS.task_application import TaskApplication
+from src.TASK_MANAGER import Task
+from src.parsing import ParsingDate
+from src.task_application import TaskApplication
 
-from MESSAGES.commands import EDIT_COMMANDS
-from MESSAGES.messages import Messages as Ms
+from messages.commands import EDIT_COMMANDS
+from messages.messages import Messages as Ms
 
 
 class InputOutput:

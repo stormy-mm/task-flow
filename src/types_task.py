@@ -5,9 +5,9 @@ from typing import Callable, Optional
 
 from abc import ABC, abstractmethod
 
-from DOMAINS.checks import CheckChangeStatusTask as CheckStatus
-from DOMAINS.time_clock import Clock
-from MESSAGES.status import Status
+from src.checks import CheckChangeStatusTask as CheckStatus
+from src.time_clock import Clock
+from messages.status import Status
 
 
 class TaskBehaviour(ABC):

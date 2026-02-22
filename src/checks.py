@@ -2,7 +2,7 @@ from datetime import datetime
 
 import exceptions as e
 
-from MESSAGES.status import Status as St, Status
+from messages.status import Status as St, Status
 
 
 class ICheck:

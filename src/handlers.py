@@ -3,11 +3,11 @@
 Импортирует только фасад TaskApplication и репозиторий — вся бизнес-логика в ядре.
 """
 
-from DOMAINS.task_application import TaskApplication
-from DOMAINS.domain_cli import DomainCLI
+from src.task_application import TaskApplication
+from src.domain_cli import DomainCLI
 
-from MESSAGES.messages import Messages as Ms
-from MESSAGES.commands import COMMANDS
+from messages.messages import Messages as Ms
+from messages.commands import COMMANDS
 
 
 class Handler:

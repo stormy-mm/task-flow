@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from DOMAINS.time_clock import Clock
+from src.time_clock import Clock
 
 
 class ParsingDate:

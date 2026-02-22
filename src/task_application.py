@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import Optional, Callable
 
-from DOMAINS.TASK_MANAGER import Task
-from DOMAINS.factories import _default_get_now, TaskFactory, RunCommand, OtherCommands, EditTask
-from DOMAINS.repository_task import InMemoryTaskRepository
+from src.TASK_MANAGER import Task
+from src.factories import _default_get_now, TaskFactory, RunCommand, OtherCommands, EditTask
+from src.repository_task import InMemoryTaskRepository
 
 
 class TaskApplication:

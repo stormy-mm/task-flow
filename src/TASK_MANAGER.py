@@ -1,10 +1,10 @@
 from datetime import datetime
 from typing import Callable, Optional
 
-from DOMAINS.time_clock import Clock
-from DOMAINS.types_task import TaskBehaviour, SimpleBehavior, TimedBehavior
+from src.time_clock import Clock
+from src.types_task import TaskBehaviour, SimpleBehavior, TimedBehavior
 
-from MESSAGES.status import Status as St
+from messages.status import Status as St
 
 
 def _status_from_string(s: str) -> St:

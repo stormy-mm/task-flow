@@ -3,12 +3,12 @@ import exceptions as e
 from datetime import datetime
 from typing import Callable, Optional
 
-from DOMAINS.checks import CheckOVERDUEStatus
-from DOMAINS.parsing import ParsingDate
-from DOMAINS.TASK_MANAGER import Task, TaskCommand, TaskEdit
-from DOMAINS.repository_task import JsonTaskRepository
-from DOMAINS.time_clock import Clock
-from DOMAINS.types_task import SimpleBehavior, TaskBehaviour, TimedBehavior
+from src.checks import CheckOVERDUEStatus
+from src.parsing import ParsingDate
+from src.TASK_MANAGER import Task, TaskCommand, TaskEdit
+from src.repository_task import JsonTaskRepository
+from src.time_clock import Clock
+from src.types_task import SimpleBehavior, TaskBehaviour, TimedBehavior
 
 
 def _default_get_now() -> datetime:
