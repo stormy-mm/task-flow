@@ -12,6 +12,11 @@ class InMemoryTaskRepository:
         """Инициализация репозитория"""
         self._tasks: dict = {}
 
+    @property
+    def tasks(self) -> dict:
+        """Функция для получения словаря задач"""
+        return self._tasks
+
     def add_task(self, task: Task) -> None:
         """Функция для добавления задачи"""
         if self._tasks.get(task.id_task):
