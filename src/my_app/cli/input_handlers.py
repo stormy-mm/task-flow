@@ -39,7 +39,7 @@ class Handler:
             result = cli.run()
 
             try:
-                if not result.success or result.success:
+                if result.reason:
                     print(result.reason) # вывод результата
             except AttributeError:
                 ...
