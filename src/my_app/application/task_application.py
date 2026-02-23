@@ -91,7 +91,7 @@ class TaskApplication:
         task = self.repo.get_by_id(task_id)
         EditTaskFactory(task, self.repo).edit_deadline(deadline)
 
-    def edit_updated_at(self, task_id: int, date: datetime) -> None:
+    def edit_update_at(self, task_id: int, date: datetime) -> None:
         """Изменить дату обновления задачи."""
         task = self.repo.get_by_id(task_id)
         EditTaskFactory(task, self.repo).edit_updated_at(date)
