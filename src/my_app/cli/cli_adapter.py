@@ -51,19 +51,28 @@ class DomainCLI:
                     if not tasks:
                         return OperationResult(False, "Список задач пуст")
                     for task in tasks.values():
-                        io.run_show(task)
+                        io.run_show(*task.__dict__.values())
                     return OperationResult(True, "")
                 case "add":
                     self.app.add(*io.run_add())
                     return OperationResult(True, "Задача добавлена")
                 case "show":
                     task = self.app.show(self._parse_id(self.parts))
-                    io.run_show(task)
+                    io.run_show(*task.__dict__.values())
                     return OperationResult(True, "")
                 case "edit":
                     id_ = self._parse_id(self.parts)
                     self.app.show(id_)
-                    io.run_edit(id_, self.app)
+                    attribute, value = io.run_edit()
+                    match attribute:
+                        case "id":
+                            self.app.edit_id(id_, value)
+                        case "title":
+                            self.app.edit_title(id_, value)
+                        case "description":
+                            self.app.edit_description(id_, value)
+                        case "deadline":
+                            self.app.edit_deadline(id_, value)
                     return OperationResult(True, "Задача изменена")
                 case "clear":
                     self.app.clear()
@@ -89,5 +98,7 @@ class DomainCLI:
             return OperationResult(False, "Ошибка парсинга")
         except e.DeadlineHasExpired:
             return OperationResult(False, "Дедлайн истек")
+        except ValueError:
+            return OperationResult(False, "Ошибка: id должен быть целым числом")
         except Exception as ex:
             return OperationResult(False, f"Ошибка: {str(ex)}")
