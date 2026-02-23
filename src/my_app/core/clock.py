@@ -55,11 +55,6 @@ class FakeClock(Clock):
         self._now = start_time
 
     @property
-    def str_spaces(self):
-        """Функция для получения строки с пробелами"""
-        return self._now.strftime('%d %m %Y %H %M %S')
-
-    @property
     def now(self):
         """Функция для получения текущего времени"""
         return self._now
