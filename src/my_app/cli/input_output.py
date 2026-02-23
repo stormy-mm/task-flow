@@ -2,7 +2,7 @@ from datetime import datetime
 
 from my_app.cli.date_parser import ParsingDate
 from my_app.common.messages import EDIT_COMMANDS, Messages as Ms
-from my_app.common import  exceptions as e
+from my_app.common import exceptions as e
 
 
 class InputOutput:
@@ -48,6 +48,9 @@ class InputOutput:
                 "- deadline <deadline>\n")
         user_in = input(">>>  ").strip().split()
 
+        if not user_in:
+            raise e.IncorrectInput
+
         cmd = user_in[0].lower()
         if cmd not in EDIT_COMMANDS:
             raise e.IncorrectInput
@@ -56,5 +59,5 @@ class InputOutput:
             if cmd == "id":
                 return cmd, int(user_in[1])
             return cmd, " ".join(user_in[1:])
-        except ValueError:
+        except ValueError, IndexError:
             raise e.IncorrectInput

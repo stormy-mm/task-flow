@@ -25,7 +25,7 @@ class SimpleBehavior(TaskBehaviour):
 class TimedBehavior(TaskBehaviour):
     """Класс для задачи с дедлайном"""
     def __init__(self, get_now: Optional[Callable[[], datetime]] = None):
-        self._get_now = get_now or Clock.now()
+        self._get_now = get_now or Clock.now
 
     def can_complete(self, task, status) -> bool:
         if self._get_now() <= task.deadline:

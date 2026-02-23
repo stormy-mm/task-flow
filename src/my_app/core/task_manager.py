@@ -73,7 +73,7 @@ class Task:
         """Восстановление задачи из словаря (после загрузки из JSON)."""
         deadline = datetime.fromisoformat(d["deadline"]) if d.get("deadline") else None
         behaviour: TaskBehaviour = (
-            TimedBehavior(deadline) if d["behaviour_type"] == "timed" else SimpleBehavior()
+            TimedBehavior() if d["behaviour_type"] == "timed" else SimpleBehavior()
         )
         return cls(
             id_task=d["id_task"],
@@ -91,7 +91,7 @@ class TaskCommand:
     """Класс для выполнения команды над задачей"""
     def __init__(self, task: Task, get_now: Optional[Callable[[], datetime]] = None):
         self.task = task
-        self._get_now = get_now or Clock.now()
+        self._get_now = get_now or Clock.now
 
     def start(self) -> None:
         """Функция для начала выполнения задачи"""
