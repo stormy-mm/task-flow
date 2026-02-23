@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-import pytest
+from pytest import fixture, raises
 
 from my_app.command_factories.command_factory import TaskFactory, RunCommandFactory, EditTaskFactory
 from my_app.core.clock import FakeClock
@@ -12,7 +12,7 @@ from my_app.common import exceptions as e
 class TestEditInfoTask:
     """Класс для проверки редактирования информации о задаче"""
 
-    @pytest.fixture
+    @fixture
     def setup(self, tmp_path):
         """Автоматически вызывается перед каждым тестом"""
         self.repo = JsonTaskRepository(tmp_path / "tasks.json")
@@ -47,7 +47,7 @@ class TestEditInfoTask:
         task = TaskFactory.create_task(2, "Test", "", "")
         RunCommandFactory(task, self.repo).add()
 
-        with pytest.raises(e.UnavailableID):
+        with raises(e.UnavailableID):
             EditTaskFactory(task, self.repo).edit_id(2)
 
     def test_cannot_done_after_deadline(self, setup):
@@ -67,5 +67,5 @@ class TestEditInfoTask:
         EditTaskFactory(task, self.repo).edit_deadline("15 1 2026")
         clock.advance(timedelta(days=3))
 
-        with pytest.raises(e.DeadlineHasExpired):
+        with raises(e.DeadlineHasExpired):
             command.complete()
