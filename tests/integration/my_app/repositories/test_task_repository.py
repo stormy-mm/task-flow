@@ -154,7 +154,7 @@ class TestStatusTaskFromRepository:
     def setup(self, tmp_path):
         """Автоматически вызывается перед каждым тестом"""
         self.repo = JsonTaskRepository(tmp_path / "data.json")
-        self.task = TaskFactory.create_task(1, "Test id", "Test description", "20 3 2026")
+        self.task = TaskFactory.create_task(1, "Test id", "Test description", "1 1 3000")
         self.command = RunCommandFactory(self.task, self.repo)
         self.command.add()
 
