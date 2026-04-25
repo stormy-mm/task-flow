@@ -1,4 +1,6 @@
 import json
+import sqlite3
+from typing import Any
 
 from my_app.common import exceptions as e
 from my_app.core.task_manager import Task
@@ -104,3 +106,56 @@ class JsonTaskRepository(InMemoryTaskRepository):
         """Очистка задач и сохранение пустого списка в файл."""
         super().clear()
         self._save()
+
+
+class SqliteTaskRepository:
+    """Сохранение задач в sql файл"""
+
+    def __init__(self, db_path: str | Path):
+        super().__init__()
+        self.conn = sqlite3.connect(db_path)
+        self._create_table()
+
+    def _create_table(self) -> None:
+        """Создание таблицы"""
+        with self.conn:
+            self.conn.execute("""DROP TABLE IF EXISTS tasks""")
+            self.conn.execute("""
+            CREATE TABLE tasks (
+                id INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                description TEXT NULL,
+                behaviour_type TEXT NOT NULL,
+                status TEXT NOT NULL,
+                deadline DATETIME NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+            """)
+
+    def add_task(self, task: Task) -> None:
+        """Создание задачи"""
+        with self.conn:
+            self.conn.execute("""
+                INSERT INTO 
+                    tasks (id, title, description, behaviour_type, status, deadline)
+                VALUES 
+                    (?, ?, ?, ?, ?, ?)
+            """,
+                              (
+                                  task.id_task,
+                                  task.title,
+                                  task.description,
+                                  task.behaviour,
+                                  task.status,
+                                  task.deadline,
+                              )
+                              )
+
+    # def update_task(self, task: Task) -> None:
+    #     """Обновление задачи"""
+
+    def get_dict(self) -> list[Any]:
+        """Получить список задач"""
+        cursor = self.conn.execute("SELECT * FROM tasks")
+        return cursor.fetchall()
