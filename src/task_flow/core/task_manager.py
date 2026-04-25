@@ -2,6 +2,7 @@ from datetime import datetime
 
 from typing import Callable, Optional
 
+from ..command_factories.validators import CheckOverdueStatus
 from ..core.clock import Clock
 from ..core.task_types import TaskBehaviour, SimpleBehavior, TimedBehavior
 from ..common.messages import Status as St
@@ -34,6 +35,9 @@ class Task:
     @classmethod
     def from_row(cls, row):
         behaviour = SimpleBehavior() if row[3] == "simple" else TimedBehavior()
+        deadline = datetime.fromisoformat(row[5]) if row[5] else None
+        created_at = datetime.fromisoformat(row[6]) if row[6] else None
+        updated_at = datetime.fromisoformat(row[7]) if row[7] else None
 
         return cls(
             id_task=row[0],
@@ -41,9 +45,9 @@ class Task:
             description=row[2],
             behaviour=behaviour,
             status=row[4],
-            deadline=row[5],
-            created_at=row[6],
-            updated_at=row[7]
+            deadline=deadline,
+            created_at=created_at,
+            updated_at=updated_at
         )
 
 
@@ -92,6 +96,8 @@ class TaskEdit:
     def edit_deadline(self, new_deadline: datetime) -> None:
         """Функция для редактирования дедлайна задачи"""
         self.task.deadline = new_deadline
+        self.task.behaviour = TimedBehavior()
+        self.task.status = CheckOverdueStatus(new_deadline, Clock.now()).run()
 
     def edit_updated_at(self, new_updated_at: datetime) -> None:
         """Функция для редактирования даты обновления задачи"""
