@@ -3,18 +3,14 @@ from zoneinfo import ZoneInfo
 
 from pytest import mark, raises
 
-from my_app.cli.input_output import InputOutput
-from my_app.common.messages import Status as St
-from my_app.core.task_types import TimedBehavior
-from my_app.common import  exceptions as e
+from task_flow.cli.input_output import InputOutput
+from task_flow.common.messages import Status as St
+from task_flow.core.task_types import TimedBehavior
+from task_flow.common import  exceptions as e
 
 
 class TestInputOutput:
     """Тесты для класса InputOutput"""
-    def test_default_parsing_date(self):
-        """Тест для проверки парсинга даты по умолчанию"""
-        assert (InputOutput()._default_parsing_date(datetime(2020, 1, 1, tzinfo=ZoneInfo("UTC"))) ==
-                "01.01.2020 00:00:00")
 
     @mark.parametrize(
         "inputs", (

@@ -3,8 +3,8 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from my_app.cli.date_parser import ParsingDate
-from my_app.common import exceptions as e
+from task_flow.cli.date_parser import ParsingDate
+from task_flow.common import exceptions as e
 
 
 class TestParsingDate:

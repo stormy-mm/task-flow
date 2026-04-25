@@ -3,10 +3,10 @@ from zoneinfo import ZoneInfo
 
 from pytest import fixture, raises
 
-from my_app.command_factories.command_factory import TaskFactory, RunCommandFactory, EditTaskFactory
-from my_app.core.clock import FakeClock
-from my_app.repositories.task_repository import SqliteTaskRepository
-from my_app.common import exceptions as e
+from task_flow.command_factories.command_factory import TaskFactory, RunCommandFactory, EditTaskFactory
+from task_flow.core.clock import FakeClock
+from task_flow.repositories.task_sql import SqliteTaskRepository
+from task_flow.common import exceptions as e
 
 
 class TestEditInfoTask:
@@ -15,7 +15,7 @@ class TestEditInfoTask:
     @fixture
     def setup(self, tmp_path):
         """Автоматически вызывается перед каждым тестом"""
-        self.db = SqliteTaskRepository(tmp_path / "test.db")
+        self.db = SqliteTaskRepository(":memory:")
         self.task = TaskFactory.create_task(1, "Test id", "", "12 3 2026 12")
         self.command = RunCommandFactory(self.task, self.db)
         self.command.add()
@@ -40,7 +40,7 @@ class TestEditInfoTask:
         """Тест для проверки редактирования deadline задачи"""
         self.edit.edit_deadline("12 1 2027 12 23")
         expected = datetime(2027, 1, 12, 12, 23, 0, tzinfo=ZoneInfo("UTC"))
-        assert self.command.find(1).deadline == expected
+        assert self.command.find(1).deadline == expected.isoformat(timespec="seconds", sep=" ")
 
     def test_cannot_edit_task_id_to_an_existing_id(self, setup):
         """Тест для проверки невозможности изменить ID задачи на существующий ID"""

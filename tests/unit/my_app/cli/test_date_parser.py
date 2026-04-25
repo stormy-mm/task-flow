@@ -1,7 +1,7 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from my_app.cli.date_parser import ParsingDate
+from task_flow.cli.date_parser import ParsingDate
 
 def test_date_parser():
     """Тест для проверки парсинга даты"""

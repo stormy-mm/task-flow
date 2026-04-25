@@ -4,10 +4,10 @@ from zoneinfo import ZoneInfo
 
 from pytest import param, raises, mark, fixture
 
-from my_app.application.task_application import TaskApplication
-from my_app.repositories.task_repository import SqliteTaskRepository
-from my_app.common.messages import Status as St
-from my_app.common import exceptions as e
+from task_flow.application.task_application import TaskApplication
+from task_flow.repositories.task_sql import SqliteTaskRepository
+from task_flow.common.messages import Status as St
+from task_flow.common import exceptions as e
 
 
 class TestTaskApplication:
@@ -16,7 +16,7 @@ class TestTaskApplication:
     @fixture
     def setup(self, tmp_path):
         """Создает TaskApplication"""
-        self.app = TaskApplication(SqliteTaskRepository(tmp_path / "tasks.db"))
+        self.app = TaskApplication(SqliteTaskRepository(":memory:"))
         self.app.add(1, "Test", "", "")
 
     def test_add_task(self, setup):
@@ -52,17 +52,17 @@ class TestTaskApplication:
 
     date_ = datetime(2020, 1, 1, 0, 0, 0, tzinfo=ZoneInfo("UTC"))
 
-    @skip
+    @skip("Какая-то ерунда со временем")
     @mark.parametrize(
-        "action, task_id, new_prop, property_, excepted_value", (
-            param("edit_id", 1, 2, "id_task", 2 ,id="test_edit_id"),
+        "action, task_id, new_value, property_, excepted_value", (
+            param("edit_id", 1, 2, "id_task", 2 , id="test_edit_id"),
             param("edit_title", 1, "Test2", "title", "Test2", id="test_edit_title"),
             param("edit_description", 1, "Test description", "description", "Test description",
                   id="test_edit_description"),
             param("edit_deadline", 1, "1 1 2020", "deadline", date_, id="test_edit_deadline"),
             param("edit_update_at", 1, date_, "updated_at", date_, id="test_edit_update_at"),
     ))
-    def test_edit(self, setup, action, property_, excepted_value, task_id, new_prop):
+    def test_edit(self, setup, action, property_, excepted_value, task_id, new_value):
         """Тест для редактирования задачи"""
-        getattr(self.app, action)(task_id, new_prop)
+        getattr(self.app, action)(task_id, new_value)
         assert getattr(self.app.show(task_id if action != "edit_id" else 2), property_) == excepted_value
