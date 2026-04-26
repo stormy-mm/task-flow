@@ -13,16 +13,13 @@ class SqliteTaskRepository:
 
     def __init__(self, db_path: str | Path):
         self.conn = sqlite3.connect(db_path)
-
-        # ! ПРИМЕНЯТЬ ТОЛЬКО В ТОМ СЛУЧАЕ, ЕСЛИ НУЖНО ПЕРЕСОЗДАТЬ ТАБЛИЦУ ИЛИ ПРИ ТЕСТАХ
         self._create_table()
 
     def _create_table(self) -> None:
         """Создание таблицы"""
         with self.conn:
-            self.conn.execute("""DROP TABLE IF EXISTS tasks""")
             self.conn.execute("""
-            CREATE TABLE tasks (
+            CREATE TABLE IF NOT EXISTS tasks (
                 id INTEGER NOT NULL PRIMARY KEY UNIQUE,
                 title TEXT NOT NULL,
                 description TEXT NULL,
@@ -101,3 +98,5 @@ class SqliteTaskRepository:
         if self.get_by_id(task_id):
             with self.conn:
                 self.conn.execute("DELETE FROM tasks WHERE id = ?", (task_id, ))
+
+
