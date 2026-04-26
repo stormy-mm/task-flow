@@ -30,10 +30,9 @@ class TestTimeTaskFromRepository:
         self.command.add()
         self.edit = EditTaskFactory(self.task, self.db)
 
-    @skip("Сложно тестировать время в БД")
     def test_task_have_date(self, setup):
         """Тест для проверки наличия даты задачи"""
-        assert self.command.find(1).created_at == self.clock.now.isoformat(timespec="seconds", sep=" ")
+        assert self.command.find(1).created_at
 
     @skip("Сложно тестировать время в БД")
     def test_updated_date_task_eq_date_today(self, setup):
